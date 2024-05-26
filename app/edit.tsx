@@ -2,10 +2,12 @@ import { TextInput, View } from "@/components/themed"
 import {
 	useEditWord,
 	useEditWordActions,
+	useRouteState,
 	useWords,
 } from "@/hooks/use-word-store"
 import { Stack, useLocalSearchParams, useRouter } from "expo-router"
 import { StatusBar } from "expo-status-bar"
+import { useEffect } from "react"
 import { Platform, Pressable, Text } from "react-native"
 
 export default function EditNote() {
@@ -21,6 +23,10 @@ export default function EditNote() {
 		deleteWord,
 	} = useEditWordActions()
 	const router = useRouter()
+
+	const { lang, cat } = useRouteState()
+
+	useEffect(() => console.log("lang&cat " + lang, cat), [])
 
 	const words = useWords()
 	const word = words.find((word) => word.id === Number(id))

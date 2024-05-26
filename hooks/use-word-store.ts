@@ -65,6 +65,8 @@ type EditWordStore = {
 			sentence: string | undefined;
 			level: levels;
 			inGame: boolean;
+			languageId: number | undefined;
+			categoryId: number | undefined;
 		}
 	actions: {
 		onChangeTitle: (title: string) => void
@@ -72,30 +74,34 @@ type EditWordStore = {
 		onChangeSentence: (sentence: string) => void
 		onChangeLevel: (level: levels ) => void
 		onChangeInGame: (inGame: boolean) => void
+		onSetLanguageId: (languageId: number) => void
+		onSetCategoryId: (categoryId: number) => void
 		saveWord: (id: string) => void
 		deleteWord: (id: string) => void
 	}
 }
 
 const useEditWordStore = create<EditWordStore>((set, get) => ({
-	word: { title: undefined, definition: undefined,sentence:undefined,level:"basic",inGame:true },
+	word: { title: undefined, definition: undefined,sentence:undefined,level:"basic",inGame:true,languageId:undefined,categoryId:undefined },
 	actions: {
 		onChangeTitle: (title) =>set((state) => ({ word: { ...state.word, title } })),
 		onChangeDefinition: (definition) =>set((state) => ({ word: { ...state.word, definition } })),
 		onChangeSentence: (sentence) =>set((state) => ({ word: { ...state.word, sentence } })),
 		onChangeLevel: (level) =>set((state) => ({ word: { ...state.word, level } })),
 		onChangeInGame: (inGame) =>set((state) => ({ word: { ...state.word, inGame } })),
+		onSetLanguageId: (languageId) =>set((state) => ({ word: { ...state.word, languageId } })),
+		onSetCategoryId: (categoryId) =>set((state) => ({ word: { ...state.word, categoryId } })),
 		saveWord: (id) => {
-			const { title, definition, sentence, level, inGame } = get().word
-			if (!title && !definition && !sentence && !level && ! inGame) return
+			const { title, definition, sentence, level, inGame,languageId,categoryId } = get().word
+			if (!title && !definition && !sentence && !level && ! inGame && ! languageId && ! categoryId) return
 			db.insert(words)
-				.values({ id: Number(id), title, definition, sentence,level ,inGame })
+				.values({ id: Number(id), title, definition, sentence,level ,inGame,languageId,categoryId })
 				.onConflictDoUpdate({
 					target: words.id,
-					set: { title, definition, sentence, level, inGame,  createdAt: new Date().toISOString() },
+					set: { title, definition, sentence, level, inGame,languageId,categoryId, createdAt: new Date().toISOString() },
 				})
 				.run()
-			set({ word: { title: undefined, definition: undefined, sentence, level, inGame } })
+			set({ word: { title: undefined, definition: undefined, sentence, level, inGame,languageId,categoryId } })
 			useWordStore.getState().actions.refetch()
 		},
 		deleteWord: (id) => {
@@ -110,3 +116,26 @@ const useEditWordStore = create<EditWordStore>((set, get) => ({
 export const useEditWord = () => useEditWordStore((state) => state.word)
 export const useEditWordActions = () =>
 	useEditWordStore((state) => state.actions)
+
+//------------------- route store --------------------------------
+
+type routeState = {
+	route:{lang: number | undefined, cat: number | undefined}
+	actions:{
+		onSetLang: (lang: number) => void 
+	    onSetCat: (cat: number) => void
+	}
+  }
+  
+  const useRouteStore = create<routeState>()((set) => ({
+	route:{lang: 0,cat: 0},
+	actions:{
+		onSetLang : (lang) =>set((state) => ({ route: { ...state.route, lang } })),
+	    onSetCat: (cat) =>set((state) => ({ route: { ...state.route, cat } }))
+	}
+  }))
+
+export const useRouteState = () => useRouteStore((state) => state.route)
+export const useRouteActions = () => useRouteStore((state) => state.actions)
+
+
