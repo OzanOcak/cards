@@ -1,21 +1,17 @@
 import { Text, View } from "@/components/themed"
-import { useCategories } from "@/hooks/use-category-store"
-import {
-	useRouteActions,
-	useRouteState,
-	useWordActions,
-} from "@/hooks/use-word-store"
+import { useCategories, useCategoryActions } from "@/hooks/use-category-store"
+import { useRouteActions, useRouteState } from "@/hooks/use-word-store"
 import { Link, useLocalSearchParams } from "expo-router"
 import { useEffect } from "react"
 import { FlatList, Pressable } from "react-native"
 
 export default function Index() {
 	const Categories = useCategories()
-	const { refetch } = useWordActions()
+	const { refetch } = useCategoryActions()
 	const languageIdParam = useLocalSearchParams()
 
-	const { onSetCat, onSetLang } = useRouteActions()
-	const { cat, lang } = useRouteState()
+	const { onSetCat, onSetLang, onSetInitiate } = useRouteActions()
+	const { cat, lang, initiate } = useRouteState()
 
 	useEffect(() => {
 		console.log(languageIdParam.id)
@@ -50,6 +46,7 @@ export default function Index() {
 						onPress={() => {
 							onSetCat(Number(languageIdParam.id))
 							onSetLang(Number(category.id))
+							onSetInitiate(!initiate)
 						}}
 						className="flex-1 gap-y-2 rounded border border-black/75 p-4 dark:border-white/75"
 					>

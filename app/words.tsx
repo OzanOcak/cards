@@ -15,16 +15,17 @@ function formatDate(date: string) {
 }
 
 export default function Index() {
+	const params = useLocalSearchParams()
+
+	const lang = params.l
+	const cat = params.c
+
 	const words = useWords()
 	const searchText = useSearchText()
 	const { refetch } = useWordActions()
 
 	const { onSetCat, onSetLang } = useRouteActions()
 
-	const params = useLocalSearchParams()
-
-	const lang = params.l
-	const cat = params.c
 	useEffect(() => {
 		console.log(lang, cat)
 		onSetCat(Number(cat))

@@ -1,13 +1,12 @@
 import { Text, View } from "@/components/themed"
-import { useLanguages } from "@/hooks/use-language-store"
-import { useWordActions } from "@/hooks/use-word-store"
+import { useLanguageActions, useLanguages } from "@/hooks/use-language-store"
 //import { useSearchText, useWordActions, useWords } from "@/hooks/use-word-store"
 import { Link } from "expo-router"
 import { FlatList, Pressable } from "react-native"
 
 export default function Index() {
 	const languages = useLanguages()
-	const { refetch } = useWordActions()
+	const { refetch } = useLanguageActions()
 
 	if (languages.length === 0)
 		return (
